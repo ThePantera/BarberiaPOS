@@ -3,6 +3,15 @@
 Sistema de gestión interno (POS / CRM) para barberías: cobro rápido asociado al DNI o teléfono del
 cliente, fidelización automática, caja diaria, comisiones de barberos y catálogo con stock.
 
+## Demo online gratis (Render)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/ThePantera/BarberiaPOS)
+
+Entrá con tu cuenta de GitHub, confirmá con **Apply** y en unos minutos Render te da un link
+`https://grovee-admin-demo-xxxx.onrender.com`. Usa el plan gratuito con `DEMO_MODE=true`: arranca
+con datos de ejemplo, la contraseña es `admin` y los datos se borran cuando el servicio se duerme
+(tras ~15 minutos sin uso) o se vuelve a publicar.
+
 ## Probarlo sin instalar nada (GitHub Codespaces)
 
 En GitHub: botón verde **Code** → pestaña **Codespaces** → **Create codespace on main**.

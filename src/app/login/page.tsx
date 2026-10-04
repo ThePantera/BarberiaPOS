@@ -15,6 +15,11 @@ export default async function LoginPage() {
           <p className="text-sm text-stone-500">Ingresá para abrir la caja</p>
         </div>
         <LoginForm />
+        {process.env.DEMO_MODE === "true" && !process.env.ADMIN_PASSWORD && (
+          <p className="mt-4 rounded-xl bg-brand-50 px-3 py-2 text-center text-sm">
+            Demo: la contraseña es <b>admin</b>. Los datos se reinician cada tanto.
+          </p>
+        )}
       </div>
     </main>
   );

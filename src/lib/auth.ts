@@ -9,7 +9,7 @@ const MAX_AGE = 60 * 60 * 24 * 14; // 14 días
 function password(): string {
   const p = process.env.ADMIN_PASSWORD;
   if (p) return p;
-  if (process.env.NODE_ENV === "production")
+  if (process.env.NODE_ENV === "production" && process.env.DEMO_MODE !== "true")
     throw new Error("Definí ADMIN_PASSWORD para usar Grovee Admin en producción.");
   return "admin";
 }

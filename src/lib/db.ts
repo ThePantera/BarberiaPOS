@@ -1,6 +1,7 @@
 import Database from "better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
+import { seedDemo } from "./seed";
 
 export type DB = Database.Database;
 
@@ -129,6 +130,8 @@ export function getDb(): DB {
       process.env.DATABASE_PATH ||
       path.join(process.cwd(), "data", "grovee.db");
     globalForDb.__groveeDb = openDb(file);
+    // Modo demo: base efímera que arranca con datos de ejemplo
+    if (process.env.DEMO_MODE === "true") seedDemo(globalForDb.__groveeDb);
   }
   return globalForDb.__groveeDb;
 }
