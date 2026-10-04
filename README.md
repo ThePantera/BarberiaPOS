@@ -3,6 +3,12 @@
 Sistema de gestión interno (POS / CRM) para barberías: cobro rápido asociado al DNI o teléfono del
 cliente, fidelización automática, caja diaria, comisiones de barberos y catálogo con stock.
 
+## Probarlo sin instalar nada (GitHub Codespaces)
+
+En GitHub: botón verde **Code** → pestaña **Codespaces** → **Create codespace on main**.
+Se instala solo, carga datos de ejemplo y abre la app en el navegador.
+Contraseña: `admin`. Cuando termines, detené el codespace para no gastar horas gratis.
+
 ## Puesta en marcha
 
 ```bash
