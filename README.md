@@ -45,7 +45,7 @@ persistente (VPS, Railway, Fly.io, etc.) y respaldar ese archivo.
 
 ## Módulos
 
-- **Cobrar (POS)**: buscador por DNI/teléfono (Enter selecciona), registro exprés, barbero,
+- **Cobrar (POS)**: buscador por nombre, DNI o teléfono desde 3 caracteres (Enter selecciona); si no hay coincidencias, alta del cliente nuevo con nombre, apellido, teléfono y DNI; barbero,
   servicio con precio del catálogo, productos opcionales, alerta de fidelidad y medio de pago.
   Confirmar impacta en la caja abierta, registra la comisión, descuenta stock y suma la visita.
 - **Clientes**: ficha con historial, total gastado y visitas del mes; segmentos (fieles, frecuencia

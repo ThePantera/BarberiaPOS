@@ -1,5 +1,5 @@
 import type { DB } from "./db";
-import { DEFAULT_SETTINGS } from "./db";
+import { DEFAULT_SETTINGS, normalizeText } from "./db";
 import {
   computeSale,
   digitsOnly,
@@ -276,15 +276,18 @@ function withSegment(
 export function searchClients(db: DB, query: string, now = localDateTime()) {
   const q = query.trim();
   if (!q) return [];
-  const digits = digitsOnly(q);
+  // Solo números (con espacios, guiones, +) = DNI o teléfono; si no, nombre
+  const digits = /^[\d\s\-+.()]+$/.test(q) ? digitsOnly(q) : "";
+  const name = normalizeText(q).replace(/\s+/g, " ");
   const rows = db
     .prepare(
       `${CLIENT_STATS_SQL}
        WHERE (@digits != '' AND (c.dni = @digits OR replace(replace(replace(c.phone, ' ', ''), '-', ''), '+', '') LIKE '%' || @digits))
-          OR (@digits = '' AND (c.first_name || ' ' || c.last_name) LIKE '%' || @q || '%')
+          OR (@digits = '' AND (norm(c.first_name || ' ' || c.last_name) LIKE '%' || @name || '%'
+                                 OR norm(c.last_name || ' ' || c.first_name) LIKE '%' || @name || '%'))
        GROUP BY c.id ORDER BY c.last_name, c.first_name LIMIT 20`,
     )
-    .all({ month: now.slice(0, 7), digits, q }) as Omit<
+    .all({ month: now.slice(0, 7), digits, name }) as Omit<
     ClientWithStats,
     "days_since" | "segment"
   >[];
@@ -328,16 +331,15 @@ export function createClient(
   const dni = c.dni ? digitsOnly(c.dni) : "";
   if (!first || !last) throw new BusinessError("Nombre y apellido son obligatorios.");
   if (digitsOnly(phone).length < 6) throw new BusinessError("Teléfono inválido.");
-  if (dni) {
-    const dup = db.prepare("SELECT id FROM clients WHERE dni = ?").get(dni);
-    if (dup) throw new BusinessError("Ya existe un cliente con ese DNI.");
-  }
+  if (dni.length < 6) throw new BusinessError("Ingresá el DNI del cliente.");
+  const dup = db.prepare("SELECT id FROM clients WHERE dni = ?").get(dni);
+  if (dup) throw new BusinessError("Ya existe un cliente con ese DNI.");
   return Number(
     db
       .prepare(
         "INSERT INTO clients (dni, first_name, last_name, phone, created_at) VALUES (?, ?, ?, ?, ?)",
       )
-      .run(dni || null, first, last, phone, localDateTime()).lastInsertRowid,
+      .run(dni, first, last, phone, localDateTime()).lastInsertRowid,
   );
 }
 

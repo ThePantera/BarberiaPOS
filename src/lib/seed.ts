@@ -20,7 +20,7 @@ export function seedDemo(db: DB): boolean {
   const people = [
     ["30111222", "Juan", "Pérez", "11 2345-6789"],
     ["32444555", "Martín", "Gómez", "11 3456-7890"],
-    ["", "Lucas", "Fernández", "11 4567-8901"],
+    ["33777888", "Lucas", "Fernández", "11 4567-8901"],
     ["28999000", "Diego", "Sosa", "11 5678-9012"],
     ["35123123", "Nico", "Romero", "11 6789-0123"],
   ];

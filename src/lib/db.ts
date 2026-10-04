@@ -97,9 +97,17 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
     "¡Hola {nombre}! Te extrañamos en {barberia}. Volvé este mes y tenés un 15% de descuento en tu corte 🙌",
 };
 
+export function normalizeText(s: string) {
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+
 export function migrate(db: DB) {
   db.pragma("journal_mode = WAL");
   db.pragma("foreign_keys = ON");
+  // Búsqueda sin distinguir mayúsculas ni acentos: norm('Pérez') = 'perez'
+  db.function("norm", { deterministic: true }, (s: unknown) =>
+    normalizeText(String(s ?? "")),
+  );
   db.exec(SCHEMA);
   const insert = db.prepare(
     "INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)",

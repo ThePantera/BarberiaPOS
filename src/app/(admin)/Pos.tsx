@@ -142,8 +142,7 @@ export function Pos({
               <input
                 ref={searchRef}
                 className="input text-lg"
-                inputMode="numeric"
-                placeholder="DNI o teléfono"
+                placeholder="Nombre, DNI o teléfono"
                 autoFocus
                 value={query}
                 onChange={(e) => {
@@ -184,20 +183,29 @@ export function Pos({
                   ))}
                 </ul>
               )}
-              {results && results.length === 0 && !creating && (
-                <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-brand-50 px-3 py-2.5 text-sm">
-                  <span>No hay clientes con ese dato.</span>
-                  <button className="btn btn-brand btn-sm" onClick={() => setCreating(true)}>
-                    + Registro exprés
-                  </button>
-                </div>
+              {results && results.length > 0 && !creating && (
+                <button className="mt-2 text-sm text-stone-500 underline" onClick={() => setCreating(true)}>
+                  No es ninguno: registrar cliente nuevo
+                </button>
               )}
-              {creating && (
-                <ExpressSignup
-                  seed={query}
-                  onCancel={() => setCreating(false)}
-                  onCreated={(id) => selectClient(id)}
-                />
+              {(creating || results?.length === 0) && (
+                <>
+                  {results?.length === 0 && (
+                    <p className="mt-3 rounded-xl bg-brand-50 px-3 py-2.5 text-sm">
+                      No hay clientes que coincidan: es un <b>cliente nuevo</b>. Cargá sus datos para
+                      guardarlo y que aparezca en su próxima visita.
+                    </p>
+                  )}
+                  <ExpressSignup
+                    key={trimmed}
+                    seed={trimmed}
+                    onCancel={() => {
+                      setCreating(false);
+                      setQuery("");
+                    }}
+                    onCreated={(id) => selectClient(id)}
+                  />
+                </>
               )}
             </>
           )}
@@ -435,6 +443,9 @@ function ExpressSignup({
   const digits = seed.replace(/\D/g, "");
   // 7-8 dígitos suele ser un DNI; más largo, un teléfono
   const looksLikeDni = digits.length >= 7 && digits.length <= 8;
+  const isName = /[a-zñáéíóú]/i.test(seed);
+  const [seedFirst, ...seedLast] = isName ? seed.split(/\s+/) : [""];
+  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -454,14 +465,14 @@ function ExpressSignup({
         })
       }
     >
-      <div className="sm:col-span-2 text-sm font-bold">Registro exprés</div>
+      <div className="sm:col-span-2 text-sm font-bold">Cliente nuevo</div>
       <div>
         <label className="label">Nombre</label>
-        <input name="first_name" className="input" required autoFocus />
+        <input name="first_name" className="input" required defaultValue={cap(seedFirst)} />
       </div>
       <div>
         <label className="label">Apellido</label>
-        <input name="last_name" className="input" required />
+        <input name="last_name" className="input" required defaultValue={seedLast.map(cap).join(" ")} />
       </div>
       <div>
         <label className="label">Teléfono</label>
@@ -470,12 +481,18 @@ function ExpressSignup({
           className="input"
           inputMode="tel"
           required
-          defaultValue={looksLikeDni ? "" : digits}
+          defaultValue={isName || looksLikeDni ? "" : digits}
         />
       </div>
       <div>
-        <label className="label">DNI (opcional)</label>
-        <input name="dni" className="input" inputMode="numeric" defaultValue={looksLikeDni ? digits : ""} />
+        <label className="label">DNI</label>
+        <input
+          name="dni"
+          className="input"
+          inputMode="numeric"
+          required
+          defaultValue={!isName && looksLikeDni ? digits : ""}
+        />
       </div>
       {error && <p className="text-sm text-red-600 sm:col-span-2">{error}</p>}
       <div className="flex gap-2 sm:col-span-2">
