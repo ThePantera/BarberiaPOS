@@ -16,7 +16,7 @@ export default async function PosPage() {
     <>
       <PageHeader
         title="Cobrar"
-        subtitle="Buscá al cliente por DNI o teléfono y registrá el cobro."
+        subtitle="Buscá al cliente por nombre, DNI o teléfono y registrá el cobro."
         actions={
           breakdown && (
             <div className="text-right text-sm text-stone-500">

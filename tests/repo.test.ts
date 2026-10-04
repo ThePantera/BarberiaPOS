@@ -44,6 +44,19 @@ describe("flujo de caja", () => {
     expect(repo.searchClients(db, "99999999")).toHaveLength(0);
   });
 
+  it("busca por nombre o apellido sin importar acentos ni mayúsculas", () => {
+    expect(repo.searchClients(db, "jua")).toHaveLength(1);
+    expect(repo.searchClients(db, "PEREZ")).toHaveLength(1);
+    expect(repo.searchClients(db, "pérez juan")).toHaveLength(1);
+    expect(repo.searchClients(db, "Pedro")).toHaveLength(0);
+  });
+
+  it("el alta de cliente nuevo exige DNI", () => {
+    expect(() =>
+      repo.createClient(db, { first_name: "Ana", last_name: "Paz", phone: "11 5555-5555" }),
+    ).toThrow(/DNI/);
+  });
+
   it("aplica el descuento en la 3.ª visita del mes y cuenta visitas", () => {
     repo.openCash(db, 5000, "2026-10-01 09:00:00");
     expect(sale("2026-10-01").rule).toBeNull();
