@@ -1,0 +1,10 @@
+{
+  "name": "Grovee Admin",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "postCreateCommand": "npm install && npm run seed",
+  "postAttachCommand": "npm run dev",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": { "label": "Grovee Admin", "onAutoForward": "openBrowser" }
+  }
+}
